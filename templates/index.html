@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Health Monitoring System - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --bg-dark: #1a1a2e;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .header p {
+            color: #6c757d;
+            margin: 5px 0 0 0;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .metric-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-anomaly {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .risk-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .risk-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .risk-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .recommendations {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .recommendation-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary-color);
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        /* AI Insights Styling */
+        .ai-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .ai-powered {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .rule-based {
+            background: #6c757d;
+            color: white;
+        }
+
+        .ai-insight-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .ai-insight-section h6 {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-summary {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .ai-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ai-list li {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-color);
+            transition: all 0.2s ease;
+        }
+
+        .ai-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .ai-list li::before {
+            content: "✓";
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .encouragement-box {
+            background: linear-gradient(135deg, #11998e15 0%, #38ef7d15 100%);
+            padding: 18px;
+            border-radius: 8px;
+            border-left: 4px solid #11998e;
+            font-style: italic;
+            color: #155724;
+            font-size: 1.05rem;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        .immediate-action {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+
+        /* Streaming Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .streaming-indicator {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .user-input {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .health-score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-excellent {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .score-good {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .score-fair {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .score-poor {
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+        }
+
+        @media (max-width: 768px) {
+            .metric-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            min-width: 300px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            border: none;
+        }
+
+        .toast-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .toast-error {
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+            color: white;
+        }
+
+        .toast-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .toast-body {
+            padding: 15px;
+            font-weight: 500;
+        }
+
+        .btn-primary:disabled,
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="bi bi-heart-pulse"></i> AI Health Monitoring System</h1>
+                    <p>Real-time health monitoring with AI-powered anomaly detection</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span id="lastUpdate" class="text-muted">Last updated: --26th Nov 2025</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Input -->
+        <div class="user-input">
+            <h4 class="mb-3"><i class="bi bi-person-circle"></i> User Information</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="userId" class="form-label">User ID</label>
+                        <input type="text" class="form-control" id="userId" value="user_001" placeholder="Enter user ID">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="numRecords" class="form-label">Number of Records</label>
+                        <input type="number" class="form-control" id="numRecords" value="100" min="10" max="500">
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="loadDashboardBtn" onclick="loadDashboard()">
+                <i class="bi bi-graph-up"></i> Load Dashboard
+            </button>
+            <button class="btn btn-secondary" id="simulateRealtimeBtn" onclick="simulateRealtime()">
+                <i class="bi bi-activity"></i> Simulate Real-time Data
+            </button>
+        </div>
+
+        <!-- Toast Notification Container -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading-spinner" style="display:none;">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Analyzing health data...</p>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboardContent" style="display:none;">
+            <!-- Recommendations (Top Priority) -->
+            <div class="recommendations" style="margin-bottom: 30px;">
+                <h4 class="mb-3"><i class="bi bi-lightbulb"></i> AI Health Insights</h4>
+                <div id="recommendationsList">
+                    <!-- Recommendations will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Current Metrics -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="metric-card text-center">
+                        <i class="bi bi-heart metric-icon" style="color: #e74c3c;"></i>
+                        <div class="metric-label">Heart Rate</div>
+                        <div class="metric-value" id="heartRate">--</div>
+                        <div class="text-muted">bpm</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card text-center">
+                        <i class="bi bi-droplet metric-icon" style="color: #3498db;"></i>
+                        <div class="metric-label">Blood Oxygen</div>
+                        <div class="metric-value" id="bloodOxygen">--</div>
+                        <div class="text-muted">%</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card text-center">
+                        <i class="bi bi-thermometer-half metric-icon" style="color: #f39c12;"></i>
+                        <div class="metric-label">Temperature</div>
+                        <div class="metric-value" id="temperature">--</div>
+                        <div class="text-muted">°C</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card text-center">
+                        <i class="bi bi-wind metric-icon" style="color: #9b59b6;"></i>
+                        <div class="metric-label">Respiration</div>
+                        <div class="metric-value" id="respiration">--</div>
+                        <div class="text-muted">breaths/min</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Score and Status -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="metric-card text-center">
+                        <h5 class="mb-3">Overall Health Score</h5>
+                        <div id="healthScoreCircle" class="health-score-circle score-excellent">
+                            <span id="healthScore">--</span>
+                        </div>
+                        <div class="mt-3">
+                            <span id="anomalyBadge" class="status-badge status-normal">Normal</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <h5 class="mb-3"><i class="bi bi-shield-check"></i> Risk Assessment</h5>
+                        <div class="text-center">
+                            <div style="font-size: 1.2rem; margin: 20px 0;">
+                                <span id="riskBadge" class="status-badge risk-low">Low Risk</span>
+                            </div>
+                            <div class="mt-4">
+                                <strong>Risk Distribution</strong>
+                                <canvas id="riskChart" style="max-height: 150px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <h5 class="mb-3"><i class="bi bi-graph-up"></i> Statistics</h5>
+                        <div class="mb-2">
+                            <strong>Total Records:</strong>
+                            <span id="totalRecords" class="float-end">--</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Anomalies Detected:</strong>
+                            <span id="anomalyCount" class="float-end text-danger">--</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Avg Health Score:</strong>
+                            <span id="avgHealthScore" class="float-end">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5 class="mb-3"><i class="bi bi-activity"></i> Heart Rate Trend</h5>
+                        <canvas id="heartRateChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <h5 class="mb-3"><i class="bi bi-droplet-fill"></i> Blood Oxygen Trend</h5>
+                        <canvas id="oxygenChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="chart-container">
+                        <h5 class="mb-3"><i class="bi bi-graph-up-arrow"></i> Health Score History</h5>
+                        <canvas id="healthScoreChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let heartRateChart, oxygenChart, healthScoreChart, riskChart;
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+            
+            const toastHTML = `
+                <div class="toast toast-${type}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle'}"></i>
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 4000 });
+            toast.show();
+            
+            // Remove toast element after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
+        // Disable/enable buttons
+        function setButtonLoading(buttonId, isLoading, originalText, loadingText) {
+            const button = document.getElementById(buttonId);
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    ${loadingText}
+                `;
+            } else {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        }
+
+        async function loadDashboard() {
+            const userId = document.getElementById('userId').value;
+            const numRecords = document.getElementById('numRecords').value;
+
+            // Validate inputs
+            if (!userId) {
+                showToast('Please enter a user ID', 'error');
+                return;
+            }
+
+            // Disable button and show loading
+            setButtonLoading('loadDashboardBtn', true, 
+                '<i class="bi bi-graph-up"></i> Load Dashboard', 
+                'Loading...');
+            
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none';
+
+            try {
+                // Step 1: Simulate data
+                console.log(`📊 Starting data simulation for user: ${userId}, records: ${numRecords}`);
+                showToast(`Generating ${numRecords} health records for ${userId}...`, 'info');
+                
+                const simulateResponse = await fetch('/api/health/simulate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, num_records: parseInt(numRecords) })
+                });
+
+                console.log(`Response status: ${simulateResponse.status}`);
+                const simulateData = await simulateResponse.json();
+                console.log('Simulation response:', simulateData);
+                
+                if (!simulateData.success) {
+                    throw new Error(simulateData.error || 'Failed to generate data');
+                }
+
+                console.log('✓ Data simulation successful');
+                showToast('✓ Data generated. Loading with AI insights...', 'success');
+
+                // Step 2: Stream dashboard data with AI insights
+                console.log(`📈 Streaming dashboard data for user: ${userId}`);
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+                
+                // Show loading state for recommendations
+                const recList = document.getElementById('recommendationsList');
+                recList.innerHTML = `
+                    <div class="ai-badge ai-powered">
+                        <i class="bi bi-robot"></i> AI-Powered Insights Loading...
+                    </div>
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3">Analyzing your health data with AI...</p>
+                    </div>
+                `;
+                
+                try {
+                    await loadDashboardWithStreaming(userId);
+                    showToast('✓ Dashboard loaded with AI insights!', 'success');
+                    console.log('✓ Dashboard streaming complete');
+                } catch (streamError) {
+                    console.warn('Streaming failed, already handled by fallback');
+                }
+                
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+                console.error('Dashboard loading error:', error);
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                // Show error state in recommendations
+                const recList = document.getElementById('recommendationsList');
+                recList.innerHTML = `
+                    <div class="alert-box immediate-action">
+                        <h6><i class="bi bi-exclamation-triangle"></i> Error Loading Data</h6>
+                        <p>Unable to load health insights: ${error.message}</p>
+                        <p>Please try again or contact support if the issue persists.</p>
+                    </div>
+                `;
+            } finally {
+                setButtonLoading('loadDashboardBtn', false, 
+                    '<i class="bi bi-graph-up"></i> Load Dashboard', 
+                    'Loading...');
+            }
+        }
+
+        async function loadDashboardWithStreaming(userId) {
+            return new Promise((resolve, reject) => {
+                const eventSource = new EventSource(`/api/health/dashboard/${userId}/stream`);
+                let aiChunks = [];
+                let dashboardData = null;
+                let timeout;
+                
+                // Set timeout for streaming
+                timeout = setTimeout(() => {
+                    console.warn('Streaming timeout, falling back to standard load');
+                    eventSource.close();
+                    loadDashboardFallback(userId).then(resolve).catch(reject);
+                }, 15000); // 15 second timeout
+                
+                eventSource.addEventListener('message', (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        console.log('Received event:', data.type);
+                    
+                    if (data.type === 'metrics') {
+                        // Update dashboard metrics immediately
+                        dashboardData = data.data;
+                        updateDashboardMetrics(dashboardData);
+                    } else if (data.type === 'ai_start') {
+                        // AI streaming started
+                        const recList = document.getElementById('recommendationsList');
+                        recList.innerHTML = `
+                            <div class="ai-badge ai-powered">
+                                <i class="bi bi-robot"></i> AI-Powered Insights by Gemini
+                            </div>
+                            <div class="ai-summary" id="streamingContent" style="white-space: pre-wrap; line-height: 1.8;">
+                                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                Generating insights...
+                            </div>
+                        `;
+                    } else if (data.type === 'ai_chunk') {
+                        // Accumulate and display AI chunks in real-time
+                        aiChunks.push(data.chunk);
+                        const streamingContent = document.getElementById('streamingContent');
+                        if (streamingContent) {
+                            // Convert markdown-style headers to HTML and display
+                            const formattedText = formatStreamingText(aiChunks.join(''));
+                            streamingContent.innerHTML = formattedText;
+                        }
+                    } else if (data.type === 'ai_complete') {
+                        // Finalize the display
+                        const completeText = aiChunks.join('');
+                        const recList = document.getElementById('recommendationsList');
+                        recList.innerHTML = `
+                            <div class="ai-badge ai-powered">
+                                <i class="bi bi-robot"></i> AI-Powered Insights by Gemini
+                            </div>
+                            <div class="ai-summary" style="line-height: 1.8;">
+                                ${formatStreamingText(completeText)}
+                            </div>
+                        `;
+                    } else if (data.type === 'fallback') {
+                        // Display rule-based recommendations
+                        displayFallbackRecommendations(data.recommendations);
+                    } else if (data.type === 'complete') {
+                        // Streaming complete
+                        clearTimeout(timeout);
+                        eventSource.close();
+                        resolve();
+                    } else if (data.type === 'error') {
+                        console.error('Streaming error:', data.error);
+                        showToast('Streaming failed, using fallback mode', 'error');
+                        clearTimeout(timeout);
+                        eventSource.close();
+                        loadDashboardFallback(userId).then(resolve).catch(reject);
+                    }
+                } catch (e) {
+                    console.error('Error processing event:', e);
+                    showToast('Error processing data: ' + e.message, 'error');
+                }
+            });
+            
+            eventSource.addEventListener('error', (error) => {
+                console.error('EventSource error:', error);
+                clearTimeout(timeout);
+                eventSource.close();
+                showToast('Connection error, loading with standard method', 'info');
+                loadDashboardFallback(userId).then(resolve).catch(reject);
+            });
+        });
+        }
+        
+        async function loadDashboardFallback(userId) {
+            console.log('📈 Loading dashboard with standard method (fallback)');
+            try {
+                const response = await fetch(`/api/health/dashboard/${userId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateDashboardMetrics(data.dashboard);
+                    
+                    if (data.dashboard.using_ai && data.dashboard.ai_insights) {
+                        displayAIInsights(data.dashboard.ai_insights, true);
+                    } else {
+                        displayFallbackRecommendations(data.dashboard.recommendations);
+                    }
+                    
+                    return data.dashboard;
+                } else {
+                    throw new Error(data.error || 'Failed to load dashboard');
+                }
+            } catch (error) {
+                console.error('Fallback loading error:', error);
+                throw error;
+            }
+        }
+
+        function formatStreamingText(text) {
+            // Convert markdown-style formatting to HTML for better readability
+            let formatted = text
+                // Convert ## headers to bold headers with spacing
+                .replace(/## ([A-Z\s]+)/g, '<strong style="display: block; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; color: #2c3e50;">$1</strong>')
+                // Convert bullet points (•) to styled list items
+                .replace(/• (.+)/g, '<div style="margin-left: 20px; margin-bottom: 8px;">• $1</div>')
+                // Convert line breaks to proper spacing
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>');
+            
+            return formatted;
+        }
+        
+        function updateDashboardMetrics(data) {
+            // Update current metrics
+            document.getElementById('heartRate').textContent = data.current_metrics.heart_rate;
+            document.getElementById('bloodOxygen').textContent = data.current_metrics.blood_oxygen;
+            document.getElementById('temperature').textContent = data.current_metrics.temperature.toFixed(1);
+            document.getElementById('respiration').textContent = data.current_metrics.respiration_rate;
+
+            // Update health score
+            const healthScore = data.current_metrics.health_score;
+            document.getElementById('healthScore').textContent = healthScore;
+            
+            const scoreCircle = document.getElementById('healthScoreCircle');
+            scoreCircle.className = 'health-score-circle';
+            if (healthScore >= 80) scoreCircle.classList.add('score-excellent');
+            else if (healthScore >= 60) scoreCircle.classList.add('score-good');
+            else if (healthScore >= 40) scoreCircle.classList.add('score-fair');
+            else scoreCircle.classList.add('score-poor');
+
+            // Update status badges
+            const anomalyBadge = document.getElementById('anomalyBadge');
+            anomalyBadge.textContent = data.status.anomaly;
+            anomalyBadge.className = 'status-badge ' + 
+                (data.status.anomaly === 'Normal' ? 'status-normal' : 'status-anomaly');
+
+            const riskBadge = document.getElementById('riskBadge');
+            riskBadge.textContent = data.status.risk_level;
+            riskBadge.className = 'status-badge';
+            if (data.status.risk_level === 'Low Risk') riskBadge.classList.add('risk-low');
+            else if (data.status.risk_level === 'Medium Risk') riskBadge.classList.add('risk-medium');
+            else riskBadge.classList.add('risk-high');
+
+            // Update statistics
+            document.getElementById('totalRecords').textContent = data.statistics.total_records;
+            document.getElementById('anomalyCount').textContent = data.statistics.anomaly_count;
+            document.getElementById('avgHealthScore').textContent = data.statistics.avg_health_score.toFixed(1);
+
+            // Update charts
+            updateCharts(data.trends, data.statistics.risk_distribution);
+        }
+
+        function displayAIInsights(insights, usingAI) {
+            const recList = document.getElementById('recommendationsList');
+            
+            recList.innerHTML = `
+                <!-- AI Badge -->
+                <div class="ai-badge ${usingAI ? 'ai-powered' : 'rule-based'}">
+                    <i class="bi bi-${usingAI ? 'robot' : 'gear'}"></i> ${usingAI ? 'AI-Powered Insights by Gemini' : 'Rule-Based Recommendations'}
+                </div>
+                
+                <!-- Summary -->
+                ${insights.summary ? `
+                    <div class="ai-summary">
+                        <strong><i class="bi bi-lightbulb-fill"></i> Summary:</strong><br>
+                        ${insights.summary}
+                    </div>
+                ` : ''}
+                
+                <!-- Key Findings -->
+                ${insights.key_findings && insights.key_findings.length > 0 ? `
+                    <div class="ai-insight-section">
+                        <h6><i class="bi bi-search"></i> Key Findings</h6>
+                        <ul class="ai-list">
+                            ${insights.key_findings.map(finding => `<li>${finding}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                
+                <!-- Immediate Actions (if any) -->
+                ${insights.immediate_actions && insights.immediate_actions.length > 0 ? `
+                    <div class="ai-insight-section immediate-action alert-box">
+                        <h6><i class="bi bi-exclamation-triangle-fill"></i> Immediate Actions Required</h6>
+                        <ul class="ai-list">
+                            ${insights.immediate_actions.map(action => `<li>${action}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                
+                <!-- Recommendations -->
+                ${insights.recommendations && insights.recommendations.length > 0 ? `
+                    <div class="ai-insight-section">
+                        <h6><i class="bi bi-clipboard-check"></i> Personalized Recommendations</h6>
+                        <ul class="ai-list">
+                            ${insights.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                
+                <!-- Lifestyle Tips -->
+                ${insights.lifestyle_tips && insights.lifestyle_tips.length > 0 ? `
+                    <div class="ai-insight-section">
+                        <h6><i class="bi bi-heart-fill"></i> Lifestyle Tips</h6>
+                        <ul class="ai-list">
+                            ${insights.lifestyle_tips.map(tip => `<li>${tip}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                
+                <!-- Monitoring Advice -->
+                ${insights.monitoring_advice ? `
+                    <div class="ai-insight-section">
+                        <h6><i class="bi bi-eye-fill"></i> Monitoring Advice</h6>
+                        <p>${insights.monitoring_advice}</p>
+                    </div>
+                ` : ''}
+                
+                <!-- When to Seek Help -->
+                ${insights.when_to_seek_help ? `
+                    <div class="ai-insight-section alert-box">
+                        <h6><i class="bi bi-hospital"></i> When to Seek Medical Help</h6>
+                        <p>${insights.when_to_seek_help}</p>
+                    </div>
+                ` : ''}
+                
+                <!-- Encouragement -->
+                ${insights.encouragement ? `
+                    <div class="encouragement-box">
+                        <i class="bi bi-emoji-smile-fill"></i> ${insights.encouragement}
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function displayFallbackRecommendations(recommendations) {
+            const recList = document.getElementById('recommendationsList');
+            recList.innerHTML = `
+                <div class="ai-badge rule-based">
+                    <i class="bi bi-gear"></i> Rule-Based Recommendations
+                </div>
+                ${recommendations.map(rec => 
+                    `<div class="recommendation-item">${rec}</div>`
+                ).join('')}
+            `;
+        }
+
+        function updateDashboard(dashboard) {
+            // Update current metrics
+            document.getElementById('heartRate').textContent = dashboard.current_metrics.heart_rate;
+            document.getElementById('bloodOxygen').textContent = dashboard.current_metrics.blood_oxygen;
+            document.getElementById('temperature').textContent = dashboard.current_metrics.temperature.toFixed(1);
+            document.getElementById('respiration').textContent = dashboard.current_metrics.respiration_rate;
+
+            // Update health score
+            const healthScore = dashboard.current_metrics.health_score;
+            document.getElementById('healthScore').textContent = healthScore;
+            
+            const scoreCircle = document.getElementById('healthScoreCircle');
+            scoreCircle.className = 'health-score-circle';
+            if (healthScore >= 80) scoreCircle.classList.add('score-excellent');
+            else if (healthScore >= 60) scoreCircle.classList.add('score-good');
+            else if (healthScore >= 40) scoreCircle.classList.add('score-fair');
+            else scoreCircle.classList.add('score-poor');
+
+            // Update status badges
+            const anomalyBadge = document.getElementById('anomalyBadge');
+            anomalyBadge.textContent = dashboard.status.anomaly;
+            anomalyBadge.className = 'status-badge ' + 
+                (dashboard.status.anomaly === 'Normal' ? 'status-normal' : 'status-anomaly');
+
+            const riskBadge = document.getElementById('riskBadge');
+            riskBadge.textContent = dashboard.status.risk_level;
+            riskBadge.className = 'status-badge';
+            if (dashboard.status.risk_level === 'Low Risk') riskBadge.classList.add('risk-low');
+            else if (dashboard.status.risk_level === 'Medium Risk') riskBadge.classList.add('risk-medium');
+            else riskBadge.classList.add('risk-high');
+
+            // Update statistics
+            document.getElementById('totalRecords').textContent = dashboard.statistics.total_records;
+            document.getElementById('anomalyCount').textContent = dashboard.statistics.anomaly_count;
+            document.getElementById('avgHealthScore').textContent = dashboard.statistics.avg_health_score.toFixed(1);
+
+            // Update charts
+            updateCharts(dashboard.trends, dashboard.statistics.risk_distribution);
+
+            // Update recommendations with AI insights
+            if (dashboard.using_ai && dashboard.ai_insights) {
+                displayAIInsights(dashboard.ai_insights, true);
+            } else {
+                displayFallbackRecommendations(dashboard.recommendations);
+            }
+
+            // Update timestamp
+            document.getElementById('lastUpdate').textContent = 
+                'Last updated: ' + new Date(dashboard.last_updated).toLocaleString();
+        }
+
+        function updateCharts(trends, riskDist) {
+            const labels = trends.timestamps.map((t, i) => `T${i+1}`);
+
+            // Heart Rate Chart
+            const hrCtx = document.getElementById('heartRateChart').getContext('2d');
+            if (heartRateChart) heartRateChart.destroy();
+            heartRateChart = new Chart(hrCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Heart Rate (bpm)',
+                        data: trends.heart_rate,
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 50, max: 120 }
+                    }
+                }
+            });
+
+            // Oxygen Chart
+            const o2Ctx = document.getElementById('oxygenChart').getContext('2d');
+            if (oxygenChart) oxygenChart.destroy();
+            oxygenChart = new Chart(o2Ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Blood Oxygen (%)',
+                        data: trends.blood_oxygen,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 85, max: 100 }
+                    }
+                }
+            });
+
+            // Health Score Chart
+            const hsCtx = document.getElementById('healthScoreChart').getContext('2d');
+            if (healthScoreChart) healthScoreChart.destroy();
+            healthScoreChart = new Chart(hsCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Health Score',
+                        data: trends.health_score,
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 0, max: 100 }
+                    }
+                }
+            });
+
+            // Risk Distribution Chart
+            const riskCtx = document.getElementById('riskChart').getContext('2d');
+            if (riskChart) riskChart.destroy();
+            riskChart = new Chart(riskCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(riskDist),
+                    datasets: [{
+                        data: Object.values(riskDist),
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        async function simulateRealtime() {
+            const userId = document.getElementById('userId').value;
+            
+            // Validate input
+            if (!userId) {
+                showToast('Please enter a user ID', 'error');
+                return;
+            }
+
+            // Disable button and show loading
+            setButtonLoading('simulateRealtimeBtn', true,
+                '<i class="bi bi-activity"></i> Simulate Real-time Data',
+                'Analyzing...');
+
+            const realtimeData = {
+                user_id: userId,
+                heart_rate: Math.floor(Math.random() * 40) + 60,
+                blood_oxygen: Math.floor(Math.random() * 10) + 90,
+                temperature: parseFloat((Math.random() * 2 + 35.5).toFixed(1)),
+                respiration_rate: Math.floor(Math.random() * 8) + 12,
+                activity_level: ['low', 'moderate', 'high'][Math.floor(Math.random() * 3)],
+                steps: Math.floor(Math.random() * 100),
+                sleep_quality: ['poor', 'fair', 'good', 'excellent'][Math.floor(Math.random() * 4)]
+            };
+
+            console.log('🔬 Starting real-time analysis...');
+            console.log('Real-time data:', realtimeData);
+            showToast('Analyzing health data...', 'info');
+
+            try {
+                const response = await fetch('/api/health/realtime', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(realtimeData)
+                });
+
+                console.log(`Real-time response status: ${response.status}`);
+                const data = await response.json();
+                console.log('Real-time analysis result:', data);
+                
+                if (data.success) {
+                    showToast('✓ Analysis complete!', 'success');
+                    
+                    // Create a more attractive result display
+                    const resultHTML = `
+                        <div style="font-size: 14px; line-height: 1.8;">
+                            <h5 style="color: white; margin-bottom: 15px;">📊 Real-time Analysis Results</h5>
+                            <div><strong>Health Score:</strong> ${data.analysis.health_score}/100</div>
+                            <div><strong>Status:</strong> ${data.analysis.anomaly_status}</div>
+                            <div><strong>Risk Level:</strong> ${data.analysis.risk_level}</div>
+                            <hr style="border-color: rgba(255,255,255,0.3); margin: 10px 0;">
+                            <div><strong>Metrics:</strong></div>
+                            <div>❤️ Heart Rate: ${data.metrics.heart_rate} bpm</div>
+                            <div>💧 Blood Oxygen: ${data.metrics.blood_oxygen}%</div>
+                            <div>🌡️ Temperature: ${data.metrics.temperature}°C</div>
+                            ${data.recommendations && data.recommendations.length > 0 ? 
+                                '<hr style="border-color: rgba(255,255,255,0.3); margin: 10px 0;"><div><strong>Top Recommendation:</strong><br>' + 
+                                data.recommendations[0] + '</div>' : ''}
+                        </div>
+                    `;
+                    
+                    // Show detailed result in a modal-like toast
+                    const toastContainer = document.getElementById('toastContainer');
+                    const resultToastId = 'result-toast-' + Date.now();
+                    
+                    const toastHTML = `
+                        <div class="toast toast-info" id="${resultToastId}" role="alert" style="min-width: 400px;">
+                            <div class="toast-body">
+                                ${resultHTML}
+                                <button type="button" class="btn btn-sm btn-light mt-2" onclick="document.getElementById('${resultToastId}').remove()">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+                    const toastElement = document.getElementById(resultToastId);
+                    const toast = new bootstrap.Toast(toastElement, { autohide: false });
+                    toast.show();
+                } else {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+                console.error('Real-time analysis error:', error);
+            } finally {
+                setButtonLoading('simulateRealtimeBtn', false,
+                    '<i class="bi bi-activity"></i> Simulate Real-time Data',
+                    'Analyzing...');
+            }
+        }
+
+        // Load dashboard on page load
+        window.onload = function() {
+            // Optional: Auto-load dashboard
+            // loadDashboard();
+        };
+    </script>
+</body>
+</html>
