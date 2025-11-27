@@ -128,14 +128,14 @@ def initialize_models():
 
 @app.route('/')
 def home():
-    """Main dashboard page"""
-    return render_template('index.html')
-
-
-@app.route('/dashboard')
-def dashboard():
-    """Modern React dashboard integrated with backend"""
+    """Main dashboard with AI insights"""
     return render_template('dashboard.html')
+
+
+@app.route('/records')
+def records():
+    """View simulated health records"""
+    return render_template('index.html')
 
 
 @app.route('/api/health/simulate', methods=['POST'])
