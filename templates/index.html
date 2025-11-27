@@ -8,20 +8,37 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         :root {
-            --primary-color: #4a90e2;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --bg-dark: #1a1a2e;
-            --bg-light: #f8f9fa;
+            --primary-blue: #4169E1;
+            --heart-red: #FF4757;
+            --blood-red: #E74C3C;
+            --temp-orange: #FF6B6B;
+            --lungs-blue: #5DADE2;
+            --success-green: #7FD18C;
+            --bg-gradient: linear-gradient(135deg, #E8EEF5 0%, #DFE9F3 100%);
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-dark: #2C3E50;
+            --text-muted: #7F8C8D;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
             min-height: 100vh;
             padding: 20px;
+            color: var(--text-dark);
         }
 
         .dashboard-container {
@@ -29,121 +46,321 @@
             margin: 0 auto;
         }
 
+        /* Glass Card Effect */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Header */
         .header {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--glass-border);
         }
 
         .header h1 {
-            color: var(--primary-color);
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
             margin: 0;
         }
 
         .header p {
-            color: #6c757d;
-            margin: 5px 0 0 0;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
+            font-size: 0.9rem;
         }
 
-        .metric-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* Compact Metric Cards */
+        .compact-metric {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
         }
 
-        .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        .compact-metric:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
         }
 
-        .metric-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .compact-metric .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
         }
 
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 10px 0;
+        .metric-info {
+            flex: 1;
         }
 
         .metric-label {
-            color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
 
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .metric-unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-left: 4px;
+        }
+
+        /* Large Feature Cards */
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Status Badges */
         .status-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .status-normal {
-            background: #d4edda;
-            color: #155724;
+            background: #E8F8F0;
+            color: var(--success-green);
         }
 
         .status-anomaly {
-            background: #f8d7da;
-            color: #721c24;
+            background: #FFE5E8;
+            color: var(--heart-red);
         }
 
-        .risk-low {
-            background: #d4edda;
-            color: #155724;
+        .status-normal::before,
+        .status-anomaly::before {
+            content: '•';
+            font-size: 1.2rem;
         }
 
-        .risk-medium {
-            background: #fff3cd;
-            color: #856404;
+        /* Steps Counter */
+        .steps-counter {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
         }
 
-        .risk-high {
-            background: #f8d7da;
-            color: #721c24;
+        .steps-circle {
+            position: relative;
+            width: 180px;
+            height: 180px;
         }
 
+        .steps-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .steps-value h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .steps-value p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
+        }
+
+        .steps-goal {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Heart Rate Display */
+        .heart-display {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .heart-icon-large {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF4757 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+            box-shadow: 0 10px 40px rgba(255, 71, 87, 0.3);
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10% { transform: scale(1.05); }
+            20% { transform: scale(1); }
+        }
+
+        .heart-rate-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .heart-rate-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Chart Container */
         .chart-container {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
             margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
         .recommendations {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
         }
 
-        .recommendation-item {
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--primary-color);
-            background: #f8f9fa;
-            border-radius: 5px;
+        /* Modern Organ Cards */
+        .organ-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .organ-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .organ-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .organ-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .organ-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        .organ-status::before {
+            content: '•';
+            font-size: 1.2rem;
         }
 
         /* AI Insights Styling */
         .ai-badge {
-            display: inline-block;
-            padding: 5px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .ai-powered {
@@ -152,7 +369,7 @@
         }
 
         .rule-based {
-            background: #6c757d;
+            background: #95A5A6;
             color: white;
         }
 
@@ -255,57 +472,144 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
 
+        /* Modern Buttons */
         .btn-primary {
-            background: var(--primary-color);
+            background: var(--primary-blue);
             border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
+            padding: 14px 32px;
+            border-radius: 16px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
         }
 
         .btn-primary:hover {
-            background: #357abd;
+            background: #3654C9;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+            box-shadow: 0 6px 20px rgba(65, 105, 225, 0.4);
         }
 
         .btn-secondary {
-            background: #6c757d;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
+            background: white;
+            border: 2px solid var(--glass-border);
+            color: var(--text-dark);
+            padding: 14px 32px;
+            border-radius: 16px;
             font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
 
+        .btn-secondary:hover {
+            background: #F8F9FA;
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        /* User Input Card */
+        .user-input {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-input h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+            background: white;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        /* Sleep Time Card */
+        .sleep-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sleep-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .sleep-time {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .time-badge {
+            display: inline-block;
+            background: #2C3E50;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        /* Health Score */
         .health-score-circle {
-            width: 200px;
-            height: 200px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 20px auto;
-            font-size: 3rem;
-            font-weight: bold;
+            margin: 0 auto;
+            font-size: 2.5rem;
+            font-weight: 700;
             color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-md);
+            position: relative;
         }
 
         .score-excellent {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #7FD18C 0%, #5FB97C 100%);
         }
 
         .score-good {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #5DADE2 0%, #3498DB 100%);
         }
 
         .score-fair {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
         }
 
         .score-poor {
-            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+            background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
         }
 
         @media (max-width: 768px) {
@@ -415,117 +719,273 @@
 
         <!-- Dashboard Content -->
         <div id="dashboardContent" style="display:none;">
-            <!-- Recommendations (Top Priority) -->
-            <div class="recommendations" style="margin-bottom: 30px;">
-                <h4 class="mb-3"><i class="bi bi-lightbulb"></i> AI Health Insights</h4>
+            <!-- AI Recommendations (Top Priority) -->
+            <div class="recommendations" style="margin-bottom: 24px;">
+                <h4 class="mb-3" style="font-weight: 600; font-size: 1.1rem;">
+                    <i class="bi bi-robot"></i> AI Health Insights
+                </h4>
                 <div id="recommendationsList">
-                    <!-- Recommendations will be loaded here -->
+                    <!-- AI Recommendations will be loaded here -->
                 </div>
             </div>
 
-            <!-- Current Metrics -->
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="metric-card text-center">
-                        <i class="bi bi-heart metric-icon" style="color: #e74c3c;"></i>
-                        <div class="metric-label">Heart Rate</div>
-                        <div class="metric-value" id="heartRate">--</div>
-                        <div class="text-muted">bpm</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card text-center">
-                        <i class="bi bi-droplet metric-icon" style="color: #3498db;"></i>
-                        <div class="metric-label">Blood Oxygen</div>
-                        <div class="metric-value" id="bloodOxygen">--</div>
-                        <div class="text-muted">%</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card text-center">
-                        <i class="bi bi-thermometer-half metric-icon" style="color: #f39c12;"></i>
-                        <div class="metric-label">Temperature</div>
-                        <div class="metric-value" id="temperature">--</div>
-                        <div class="text-muted">°C</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card text-center">
-                        <i class="bi bi-wind metric-icon" style="color: #9b59b6;"></i>
-                        <div class="metric-label">Respiration</div>
-                        <div class="metric-value" id="respiration">--</div>
-                        <div class="text-muted">breaths/min</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Health Score and Status -->
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="metric-card text-center">
-                        <h5 class="mb-3">Overall Health Score</h5>
-                        <div id="healthScoreCircle" class="health-score-circle score-excellent">
-                            <span id="healthScore">--</span>
+            <!-- Main Dashboard Grid -->
+            <div class="row g-3">
+                <!-- Left Column: Metrics & Info -->
+                <div class="col-lg-3">
+                    <!-- Compact Weight/Food Cards -->
+                    <div class="compact-metric">
+                        <div class="icon" style="background: #FFE5E8;">
+                            <i class="bi bi-graph-down" style="color: var(--heart-red);"></i>
                         </div>
-                        <div class="mt-3">
-                            <span id="anomalyBadge" class="status-badge status-normal">Normal</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="metric-card">
-                        <h5 class="mb-3"><i class="bi bi-shield-check"></i> Risk Assessment</h5>
-                        <div class="text-center">
-                            <div style="font-size: 1.2rem; margin: 20px 0;">
-                                <span id="riskBadge" class="status-badge risk-low">Low Risk</span>
-                            </div>
-                            <div class="mt-4">
-                                <strong>Risk Distribution</strong>
-                                <canvas id="riskChart" style="max-height: 150px;"></canvas>
+                        <div class="metric-info">
+                            <div class="metric-label">Weight</div>
+                            <div class="metric-value">
+                                <span id="weightValue">74.2</span>
+                                <span class="metric-unit">kg</span>
                             </div>
                         </div>
                     </div>
+
+                    <div class="compact-metric">
+                        <div class="icon" style="background: #FFF4E5;">
+                            <i class="bi bi-egg-fried" style="color: #FF9800;"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Food</div>
+                            <div class="metric-value">
+                                <span id="caloriesValue">253</span>
+                                <span class="metric-unit">kCal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Steps Counter -->
+                    <div class="feature-card">
+                        <div class="steps-counter">
+                            <div class="steps-circle">
+                                <svg width="180" height="180">
+                                    <circle cx="90" cy="90" r="75" fill="none" stroke="#E8EEF5" stroke-width="12"/>
+                                    <circle id="stepsProgress" cx="90" cy="90" r="75" fill="none" 
+                                            stroke="url(#blueGradient)" stroke-width="12" 
+                                            stroke-linecap="round" 
+                                            transform="rotate(-90 90 90)"
+                                            stroke-dasharray="471" stroke-dashoffset="200"/>
+                                    <defs>
+                                        <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#4169E1"/>
+                                            <stop offset="100%" style="stop-color:#5DADE2"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="steps-value">
+                                    <h2 id="stepsCount">7,425</h2>
+                                    <p>Steps</p>
+                                </div>
+                            </div>
+                            <div class="steps-goal">10,000 Steps Goal</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="metric-card">
-                        <h5 class="mb-3"><i class="bi bi-graph-up"></i> Statistics</h5>
-                        <div class="mb-2">
-                            <strong>Total Records:</strong>
-                            <span id="totalRecords" class="float-end">--</span>
+
+                <!-- Middle Column: Heart Rate & Body -->
+                <div class="col-lg-6">
+                    <!-- Heart Rate Card -->
+                    <div class="feature-card" style="margin-bottom: 16px;">
+                        <div class="heart-display">
+                            <div class="heart-icon-large">
+                                <i class="bi bi-heart-fill"></i>
+                            </div>
+                            <div class="heart-rate-label">Heart Rate</div>
+                            <div class="heart-rate-value">
+                                <span id="heartRate">124</span> <span style="font-size: 1.2rem; font-weight: 400;">bpm</span>
+                            </div>
                         </div>
-                        <div class="mb-2">
-                            <strong>Anomalies Detected:</strong>
-                            <span id="anomalyCount" class="float-end text-danger">--</span>
+                    </div>
+
+                    <!-- Bottom Row: Compact Metrics -->
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="compact-metric">
+                                <div class="icon" style="background: #FFE5E8;">
+                                    <i class="bi bi-droplet-fill" style="color: var(--blood-red);"></i>
+                                </div>
+                                <div class="metric-info">
+                                    <div class="metric-label">Blood Status</div>
+                                    <div class="metric-value">
+                                        <span id="bloodOxygen">102</span>
+                                        <span class="metric-unit">%</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-2">
-                            <strong>Avg Health Score:</strong>
-                            <span id="avgHealthScore" class="float-end">--</span>
+                        <div class="col-6">
+                            <div class="compact-metric">
+                                <div class="icon" style="background: #FFE8E5;">
+                                    <i class="bi bi-thermometer-half" style="color: var(--temp-orange);"></i>
+                                </div>
+                                <div class="metric-info">
+                                    <div class="metric-label">Temperature</div>
+                                    <div class="metric-value">
+                                        <span id="temperature">37.1</span>
+                                        <span class="metric-unit">°C</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="compact-metric">
+                                <div class="icon" style="background: #E5F4FF;">
+                                    <i class="bi bi-heart-pulse" style="color: var(--primary-blue);"></i>
+                                </div>
+                                <div class="metric-info">
+                                    <div class="metric-label">Heart Rate (Alternative)</div>
+                                    <div class="metric-value">
+                                        <span id="heartRate2">124</span>
+                                        <span class="metric-unit">bpm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="sleep-card">
+                                <div class="sleep-label">Sleep time</div>
+                                <div class="sleep-time" id="sleepTime">7:30h</div>
+                                <span class="time-badge" id="sleepHours">00:30 - 08:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Body & Organs -->
+                <div class="col-lg-3">
+                    <!-- Body Illustration Placeholder -->
+                    <div class="feature-card" style="text-align: center; padding: 32px 20px; margin-bottom: 16px;">
+                        <div style="font-size: 8rem; color: #BDC3C7; margin-bottom: 12px;">
+                            <i class="bi bi-person-standing"></i>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">
+                            <span id="anomalyBadge" class="status-badge status-normal">
+                                <i class="bi bi-check-circle-fill"></i> Normal
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Organ Status Cards -->
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="organ-card">
+                                <span class="organ-icon">❤️</span>
+                                <div class="organ-name">Heart</div>
+                                <div class="organ-status">Normal</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="organ-card">
+                                <span class="organ-icon">🫁</span>
+                                <div class="organ-name">Lungs</div>
+                                <div class="organ-status" id="respirationStatus">Normal</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                                    <span id="respiration">16</span> breaths/min
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Charts -->
-            <div class="row">
-                <div class="col-md-6">
+            <!-- Charts Section -->
+            <div class="row g-3 mt-3">
+                <div class="col-lg-6">
                     <div class="chart-container">
-                        <h5 class="mb-3"><i class="bi bi-activity"></i> Heart Rate Trend</h5>
+                        <div class="chart-header">
+                            <span class="chart-title">
+                                <i class="bi bi-activity"></i> Heart Rate Trend
+                            </span>
+                        </div>
                         <canvas id="heartRateChart"></canvas>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-lg-6">
                     <div class="chart-container">
-                        <h5 class="mb-3"><i class="bi bi-droplet-fill"></i> Blood Oxygen Trend</h5>
+                        <div class="chart-header">
+                            <span class="chart-title">
+                                <i class="bi bi-droplet-fill"></i> Blood Oxygen Trend
+                            </span>
+                        </div>
                         <canvas id="oxygenChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="chart-container">
-                        <h5 class="mb-3"><i class="bi bi-graph-up-arrow"></i> Health Score History</h5>
+            <!-- Health Score & Stats -->
+            <div class="row g-3 mt-3">
+                <div class="col-lg-4">
+                    <div class="feature-card text-center">
+                        <h5 style="font-size: 1rem; font-weight: 600; margin-bottom: 20px;">Overall Health Score</h5>
+                        <div id="healthScoreCircle" class="health-score-circle score-excellent">
+                            <span id="healthScore">--</span>
+                        </div>
+                        <div style="margin-top: 16px; font-size: 0.9rem; color: var(--text-muted);">
+                            <span id="riskBadge" class="status-badge">Low Risk</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="feature-card">
+                        <h5 style="font-size: 1rem; font-weight: 600; margin-bottom: 20px;">
+                            <i class="bi bi-graph-up-arrow"></i> Health Score History
+                        </h5>
                         <canvas id="healthScoreChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="row g-3 mt-3">
+                <div class="col-12">
+                    <div class="feature-card">
+                        <h5 style="font-size: 1rem; font-weight: 600; margin-bottom: 20px;">
+                            <i class="bi bi-bar-chart-fill"></i> Statistics & Risk Analysis
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="compact-metric">
+                                    <div class="icon" style="background: #E5F4FF;">
+                                        <i class="bi bi-file-earmark-medical" style="color: var(--primary-blue);"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Total Records</div>
+                                        <div class="metric-value" id="totalRecords">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="compact-metric">
+                                    <div class="icon" style="background: #FFE5E8;">
+                                        <i class="bi bi-exclamation-triangle-fill" style="color: var(--heart-red);"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Anomalies Detected</div>
+                                        <div class="metric-value" id="anomalyCount">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="compact-metric">
+                                    <div class="icon" style="background: #E8F8F0;">
+                                        <i class="bi bi-award-fill" style="color: var(--success-green);"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Avg Health Score</div>
+                                        <div class="metric-value" id="avgHealthScore">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <canvas id="riskChart" style="max-height: 200px;"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -780,23 +1240,45 @@
         function formatStreamingText(text) {
             // Convert markdown-style formatting to HTML for better readability
             let formatted = text
-                // Convert ## headers to bold headers with spacing
-                .replace(/## ([A-Z\s]+)/g, '<strong style="display: block; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; color: #2c3e50;">$1</strong>')
+                // First, convert line breaks to preserve structure
+                .replace(/\n\n/g, '|||DOUBLE_BR|||')
+                .replace(/\n/g, '|||SINGLE_BR|||')
+                // Convert ## headers to bold headers with spacing (includes the line break)
+                .replace(/## ([A-Z\s]+)(\|\|\|SINGLE_BR\|\|\|)?/g, '<div style="display: block; margin-top: 20px; margin-bottom: 10px; font-weight: 700; font-size: 1.1em; color: #2c3e50;">$1</div>')
                 // Convert bullet points (•) to styled list items
-                .replace(/• (.+)/g, '<div style="margin-left: 20px; margin-bottom: 8px;">• $1</div>')
-                // Convert line breaks to proper spacing
-                .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>');
+                .replace(/• (.+?)(\|\|\|SINGLE_BR\|\|\|)/g, '<div style="margin-left: 20px; margin-bottom: 8px; font-weight: normal; color: #34495e;">• $1</div>')
+                // Restore line breaks
+                .replace(/\|\|\|DOUBLE_BR\|\|\|/g, '<br><br>')
+                .replace(/\|\|\|SINGLE_BR\|\|\|/g, '<br>');
             
             return formatted;
         }
         
         function updateDashboardMetrics(data) {
-            // Update current metrics
-            document.getElementById('heartRate').textContent = data.current_metrics.heart_rate;
+            // Update all heart rate displays
+            const heartRate = data.current_metrics.heart_rate;
+            document.getElementById('heartRate').textContent = heartRate;
+            if (document.getElementById('heartRate2')) {
+                document.getElementById('heartRate2').textContent = heartRate;
+            }
+            
+            // Update blood oxygen
             document.getElementById('bloodOxygen').textContent = data.current_metrics.blood_oxygen;
+            
+            // Update temperature
             document.getElementById('temperature').textContent = data.current_metrics.temperature.toFixed(1);
+            
+            // Update respiration
             document.getElementById('respiration').textContent = data.current_metrics.respiration_rate;
+
+            // Update steps counter (simulated based on activity)
+            const steps = Math.floor(data.current_metrics.health_score * 100);
+            document.getElementById('stepsCount').textContent = steps.toLocaleString();
+            
+            // Update steps progress circle
+            const stepsProgress = (steps / 10000) * 471; // 471 is circumference of circle
+            const dashOffset = 471 - stepsProgress;
+            document.getElementById('stepsProgress').style.strokeDashoffset = dashOffset;
 
             // Update health score
             const healthScore = data.current_metrics.health_score;
@@ -809,18 +1291,37 @@
             else if (healthScore >= 40) scoreCircle.classList.add('score-fair');
             else scoreCircle.classList.add('score-poor');
 
-            // Update status badges
+            // Update status badges with icons
             const anomalyBadge = document.getElementById('anomalyBadge');
-            anomalyBadge.textContent = data.status.anomaly;
+            const isNormal = data.status.anomaly === 'Normal';
+            anomalyBadge.innerHTML = `
+                <i class="bi bi-${isNormal ? 'check-circle-fill' : 'exclamation-triangle-fill'}"></i> 
+                ${data.status.anomaly}
+            `;
             anomalyBadge.className = 'status-badge ' + 
-                (data.status.anomaly === 'Normal' ? 'status-normal' : 'status-anomaly');
+                (isNormal ? 'status-normal' : 'status-anomaly');
 
             const riskBadge = document.getElementById('riskBadge');
             riskBadge.textContent = data.status.risk_level;
             riskBadge.className = 'status-badge';
-            if (data.status.risk_level === 'Low Risk') riskBadge.classList.add('risk-low');
-            else if (data.status.risk_level === 'Medium Risk') riskBadge.classList.add('risk-medium');
-            else riskBadge.classList.add('risk-high');
+            if (data.status.risk_level === 'Low Risk') {
+                riskBadge.classList.add('status-normal');
+            } else if (data.status.risk_level === 'Medium Risk') {
+                riskBadge.style.background = '#FFF4E5';
+                riskBadge.style.color = '#FF9800';
+            } else {
+                riskBadge.classList.add('status-anomaly');
+            }
+
+            // Update organ status
+            const respirationStatus = document.getElementById('respirationStatus');
+            if (data.current_metrics.respiration_rate >= 12 && data.current_metrics.respiration_rate <= 20) {
+                respirationStatus.textContent = 'Normal';
+                respirationStatus.style.color = 'var(--success-green)';
+            } else {
+                respirationStatus.textContent = 'Alert';
+                respirationStatus.style.color = 'var(--heart-red)';
+            }
 
             // Update statistics
             document.getElementById('totalRecords').textContent = data.statistics.total_records;

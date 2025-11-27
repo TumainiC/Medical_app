@@ -132,6 +132,12 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/dashboard')
+def dashboard():
+    """Modern React dashboard integrated with backend"""
+    return render_template('dashboard.html')
+
+
 @app.route('/api/health/simulate', methods=['POST'])
 def simulate_health_data():
     """
