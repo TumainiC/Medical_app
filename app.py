@@ -128,13 +128,7 @@ def initialize_models():
 
 @app.route('/')
 def home():
-    """Main dashboard with AI insights"""
-    return render_template('dashboard.html')
-
-
-@app.route('/records')
-def records():
-    """View simulated health records"""
+    """Main dashboard page"""
     return render_template('index.html')
 
 
